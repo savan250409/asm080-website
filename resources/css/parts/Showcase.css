@@ -1,0 +1,597 @@
+/* =====================================================================
+   Showcase layer — presents the app like a product showcase:
+   the animated hero phone screen, glowing stages behind each feature
+   mock-up, oversized feature numerals and word-by-word headline reveals.
+   ===================================================================== */
+
+/* ---------- Hero phone: live speaking-practice screen ----------
+   Everything inside is sized in em so the whole phone scales from one
+   font-size (10px desktop, smaller on short/narrow screens). */
+.phone--showcase {
+  font-size: 10px;
+  width: 31em;
+  height: 63em;
+  padding: 1.1em;
+  border-radius: 4.6em;
+  background: linear-gradient(160deg, #26244a 0%, #0f0f23 60%);
+  box-shadow:
+    0 0 0 0.25em rgba(255, 255, 255, 0.06) inset,
+    0 50px 100px -20px rgba(108, 92, 231, 0.45),
+    0 30px 60px -30px rgba(15, 15, 35, 0.5);
+}
+
+.sc {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 3.6em;
+  padding: 1.2em 1.2em 1.6em;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(120% 60% at 80% 0%, #ece7ff 0%, transparent 60%),
+    linear-gradient(180deg, #ffffff 0%, #f6f3ff 100%);
+  color: var(--text);
+  text-align: left;
+}
+
+.sc__island {
+  position: absolute;
+  top: 0.9em;
+  left: 50%;
+  width: 8.5em;
+  height: 2.4em;
+  border-radius: 2em;
+  background: #0f0f23;
+  transform: translateX(-50%);
+  z-index: 5;
+}
+
+.sc__status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3em 1.2em 0;
+  font-size: 1.15em;
+  font-weight: 700;
+  height: 2.4em;
+}
+.sc__status-icons {
+  display: inline-flex;
+  gap: 0.25em;
+  align-items: flex-end;
+}
+.sc__status-icons i {
+  width: 0.32em;
+  border-radius: 0.2em;
+  background: var(--text);
+}
+.sc__status-icons i:nth-child(1) { height: 0.5em; }
+.sc__status-icons i:nth-child(2) { height: 0.75em; }
+.sc__status-icons i:nth-child(3) { height: 1em; width: 1.7em; border-radius: 0.3em; }
+
+/* Robot peeks in from the top-right, like the app screen */
+.sc__robot {
+  position: relative;
+  height: 15.5em;
+  margin: 0 -1.2em -4.2em 0;
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+.sc__robot img {
+  position: relative;
+  width: 17em;
+  margin-right: 1.4em;
+  height: auto;
+  align-self: flex-start;
+  -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 72%, transparent 100%);
+  animation: scBob 5s var(--ease-in-out) infinite;
+  transform-origin: 60% 80%;
+}
+.sc__robot-glow {
+  position: absolute;
+  right: 2.8em;
+  top: 1.5em;
+  width: 14em;
+  height: 14em;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.35), transparent 65%);
+  animation: scGlow 4s ease-in-out infinite;
+}
+@keyframes scBob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-0.6em) rotate(-1.2deg); }
+}
+@keyframes scGlow {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.12); }
+}
+
+/* ---- Step entrance (JS adds .is-in one by one) ---- */
+.sc__step {
+  opacity: 0;
+  transform: translateY(1.4em) scale(0.94);
+  transition: opacity 0.5s ease, transform 0.7s var(--ease-spring);
+}
+.sc__step.is-in {
+  opacity: 1;
+  transform: none;
+}
+.sc__msg--me.sc__step {
+  transform: translateX(2em) scale(0.94);
+}
+.sc__msg--me.sc__step.is-in {
+  transform: none;
+}
+
+/* ---- Chat bubbles ---- */
+.sc__msg {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.9em;
+  font-size: 1.2em;
+  line-height: 1.35;
+  border-radius: 1.5em;
+}
+.sc__msg p {
+  margin: 0;
+  color: var(--text);
+  line-height: 1.35;
+  font-weight: 500;
+}
+
+.sc__msg--ai {
+  width: 82%;
+  padding: 0.85em 1em;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #ddd7ff;
+  box-shadow: 0 0.8em 2em rgba(108, 92, 231, 0.12);
+  backdrop-filter: blur(6px);
+}
+
+.sc__msg--me {
+  align-self: flex-end;
+  margin-top: 0.9em;
+  padding: 0.75em 4.4em 0.75em 1.3em;
+  background: linear-gradient(135deg, #ece5ff, #e2d8fb);
+  border: 1px solid #d6c9fb;
+  box-shadow: 0 0.8em 2em rgba(108, 92, 231, 0.12);
+}
+.sc__user {
+  position: absolute;
+  right: -0.6em;
+  top: 50%;
+  width: 4.6em;
+  height: 4.6em;
+  margin-top: -2.3em;
+  border-radius: 50%;
+  border: 0.25em solid #fff;
+  object-fit: cover;
+  box-shadow: 0 0.6em 1.4em rgba(24, 24, 58, 0.18);
+}
+
+.sc__msg--ai2 {
+  width: 90%;
+  margin-top: 0.9em;
+  padding: 0.8em 0.9em;
+  background: #fff;
+  border: 1px solid #ddd7ff;
+  box-shadow: 0 0.8em 2em rgba(108, 92, 231, 0.12);
+}
+.sc__msg--ai2 strong {
+  display: block;
+  font-weight: 800;
+}
+.sc__bot {
+  flex-shrink: 0;
+  width: 3.6em;
+  height: 3.6em;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #f1eeff;
+  border: 1px solid #e4defc;
+}
+
+/* Animated voice glyph inside bubbles */
+.sc__voice {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.18em;
+  width: 2.8em;
+  height: 2.8em;
+  border-radius: 50%;
+  background: #efecff;
+}
+.sc__voice i {
+  width: 0.22em;
+  height: calc(var(--h) * 1.3em);
+  border-radius: 1em;
+  background: #3b2fb0;
+  animation: scBar 0.9s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.15s);
+}
+.sc__voice--sm {
+  width: 2.4em;
+  height: 2.4em;
+}
+.sc__voice--sm i {
+  background: #7c3aed;
+}
+@keyframes scBar {
+  0%, 100% { transform: scaleY(0.45); }
+  50% { transform: scaleY(1); }
+}
+
+/* First AI line types itself out */
+.sc__type {
+  display: inline;
+  background: linear-gradient(90deg, var(--text) 50%, transparent 50%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.sc__msg--ai.is-in .sc__type {
+  animation: scType 1.1s steps(28) 0.25s forwards;
+}
+@keyframes scType {
+  to { background-position: 0 0; }
+}
+
+/* ---- Pronunciation score card ---- */
+.sc__score {
+  display: flex;
+  align-items: center;
+  gap: 0.9em;
+  margin-top: 0.9em;
+  padding: 0.9em 0.9em 0.9em 1em;
+  border-radius: 1.6em;
+  background: linear-gradient(135deg, #effcf3, #e3f8ea);
+  border: 1px solid #c4ecd1;
+  box-shadow: 0 0.8em 2em rgba(22, 163, 74, 0.12);
+}
+.sc__check {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 3.4em;
+  height: 3.4em;
+  border-radius: 50%;
+  background: #16a34a;
+  color: #fff;
+  box-shadow: 0 0.5em 1.2em rgba(22, 163, 74, 0.35);
+}
+.sc__check svg {
+  width: 1.8em;
+  height: 1.8em;
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+}
+.sc__score.is-in .sc__check svg {
+  animation: scDraw 0.5s ease 0.35s forwards;
+}
+@keyframes scDraw {
+  to { stroke-dashoffset: 0; }
+}
+.sc__score-text {
+  flex: 1;
+  min-width: 0;
+}
+.sc__score-text strong {
+  display: block;
+  font-size: 1.3em;
+  font-weight: 800;
+  color: #15803d;
+  letter-spacing: -0.01em;
+}
+.sc__score-text small {
+  display: block;
+  margin-top: 0.2em;
+  font-size: 1.05em;
+  line-height: 1.35;
+  color: #1f2937;
+}
+.sc__ring {
+  position: relative;
+  flex-shrink: 0;
+  width: 5.4em;
+  height: 5.4em;
+}
+.sc__ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.sc__ring circle {
+  fill: none;
+  stroke-width: 4;
+}
+.sc__ring-track {
+  stroke: #c9eed5;
+}
+.sc__ring-fill {
+  stroke: #16a34a;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transition: stroke-dashoffset 1.4s var(--ease-out) 0.2s;
+}
+.sc__score.is-in .sc__ring-fill {
+  stroke-dashoffset: 8; /* 92% */
+}
+.sc__pct {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 1.35em;
+  font-weight: 800;
+  color: #15803d;
+}
+
+/* ---- Mic + waveform ---- */
+.sc__mic {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9em;
+}
+.sc__wave {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32em;
+  height: 4.4em;
+}
+.sc__wave i {
+  width: 0.42em;
+  height: calc(var(--h) * 4em);
+  border-radius: 1em;
+  background: linear-gradient(180deg, #c4b5fd, #a78bfa);
+  opacity: 0.85;
+  transform: scaleY(0.3);
+}
+.sc__mic.is-in .sc__wave i {
+  animation: scBar 1.1s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.13s);
+}
+.sc__mic-btn {
+  position: relative;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 7.2em;
+  height: 7.2em;
+  border-radius: 50%;
+  color: #fff;
+  background: radial-gradient(circle at 35% 30%, #a78bfa 0%, #7c3aed 45%, #5b21b6 100%);
+  box-shadow:
+    0 0 0 0.5em rgba(167, 139, 250, 0.25),
+    0 1.2em 2.6em rgba(124, 58, 237, 0.45);
+}
+.sc__mic-btn svg {
+  width: 3em;
+  height: 3em;
+}
+.sc__mic-btn::before,
+.sc__mic-btn::after {
+  content: '';
+  position: absolute;
+  inset: -0.5em;
+  border-radius: 50%;
+  border: 0.2em solid rgba(139, 92, 246, 0.45);
+  opacity: 0;
+}
+.sc__mic.is-in .sc__mic-btn::before,
+.sc__mic.is-in .sc__mic-btn::after {
+  animation: scRipple 2.2s var(--ease-out) infinite;
+}
+.sc__mic.is-in .sc__mic-btn::after {
+  animation-delay: 1.1s;
+}
+@keyframes scRipple {
+  0% { opacity: 0.9; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.55); }
+}
+
+.sc__tap {
+  align-self: center;
+  margin-top: 0.8em;
+  padding: 0.45em 1.5em;
+  border-radius: 2em;
+  font-size: 1.2em;
+  font-weight: 700;
+  color: var(--text);
+  background: #ece6ff;
+  border: 1px solid #ddd2fd;
+}
+
+/* Fade the whole conversation out before the loop restarts */
+.sc.is-resetting .sc__step {
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+@media (max-width: 520px) {
+  .phone--showcase {
+    font-size: 8.8px;
+  }
+  /* Keep the floating badges off the phone's screen on small devices */
+  .hero__visual {
+    padding-bottom: 54px;
+  }
+  .hero__visual .float-card {
+    padding: 9px 12px;
+    gap: 9px;
+  }
+  .hero__visual .float-card__icon {
+    width: 32px;
+    height: 32px;
+    font-size: 15px;
+  }
+  .hero__visual .float-card--top {
+    top: -18px;
+    left: 0;
+  }
+  .hero__visual .float-card--bottom {
+    bottom: 0;
+    right: 0;
+  }
+}
+@media (max-width: 360px) {
+  .phone--showcase {
+    font-size: 8.2px;
+  }
+}
+
+/* ---------- Hero stage: orbit rings + glow behind the phone ---------- */
+.hero__visual {
+  isolation: isolate;
+}
+.hero__visual::before,
+.hero__visual::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+}
+.hero__visual::before {
+  width: min(560px, 120%);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.22) 0%, rgba(236, 72, 153, 0.08) 45%, transparent 70%);
+  animation: stagePulse 6s ease-in-out infinite;
+}
+.hero__visual::after {
+  width: min(500px, 110%);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border: 1.5px dashed rgba(108, 92, 231, 0.22);
+  animation: stageSpin 40s linear infinite;
+}
+@keyframes stagePulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+@keyframes stageSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- Feature showcase stages ---------- */
+.feature-row {
+  --sp: 0; /* scroll position of the row, -1 (below) .. 1 (above); set by JS */
+}
+
+.feature-row__visual {
+  position: relative;
+  isolation: isolate;
+}
+/* Coloured glow pool under the card */
+.feature-row__visual::before {
+  content: '';
+  position: absolute;
+  inset: -18% -14%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--mc) 38%, transparent), color-mix(in srgb, var(--mc) 10%, transparent) 60%, transparent);
+  translate: 0 calc(var(--sp) * -30px);
+  animation: stagePulse 7s ease-in-out infinite;
+  pointer-events: none;
+}
+/* Dotted grid offset behind the card */
+.feature-row__visual::after {
+  content: '';
+  position: absolute;
+  width: 52%;
+  height: 60%;
+  right: -9%;
+  bottom: -14%;
+  z-index: -1;
+  border-radius: 28px;
+  background-image: radial-gradient(color-mix(in srgb, var(--mc) 60%, transparent) 2px, transparent 2.3px);
+  background-size: 18px 18px;
+  -webkit-mask-image: radial-gradient(closest-side, #000 60%, transparent);
+  mask-image: radial-gradient(closest-side, #000 60%, transparent);
+  translate: 0 calc(var(--sp) * 40px);
+  pointer-events: none;
+}
+.feature-row--rev .feature-row__visual::after {
+  right: auto;
+  left: -9%;
+}
+
+/* Quiz options pop in one by one each time the row appears */
+.feature-row.is-visible .mock__opt {
+  animation: optIn 0.6s var(--ease-spring) backwards;
+}
+.feature-row.is-visible .mock__opt:nth-child(2) { animation-delay: 0.1s; }
+.feature-row.is-visible .mock__opt:nth-child(3) { animation-delay: 0.2s; }
+.feature-row.is-visible .mock__opt:nth-child(4) { animation-delay: 0.3s; }
+@keyframes optIn {
+  from { opacity: 0; transform: translateX(-16px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+/* Keep the correct-answer glow looping after the entrance */
+.feature-row.is-visible .mock__opt--glow {
+  animation: optIn 0.6s var(--ease-spring) backwards, optGlow 2.2s ease-in-out 0.8s infinite;
+}
+
+
+/* ---------- Word-by-word headline reveal (spans added by app.js) ---------- */
+.w {
+  display: inline-block;
+  overflow: clip;
+  overflow-clip-margin: 0.08em;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+  vertical-align: bottom;
+}
+.w__i {
+  display: inline-block;
+  transform: translateY(110%);
+}
+.is-visible .w__i {
+  animation: wordUp 0.9s var(--ease-out) forwards;
+  animation-delay: calc(var(--d, 0s) + 0.1s + var(--wi, 0) * 0.06s);
+}
+@keyframes wordUp {
+  from { transform: translateY(110%) rotate(4deg); }
+  to { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc__step,
+  .w__i {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    animation: none !important;
+  }
+  .sc__robot img,
+  .sc__robot-glow,
+  .hero__visual::before,
+  .hero__visual::after,
+  .feature-row__visual::before,
+  .sc__voice i,
+  .sc__wave i {
+    animation: none !important;
+  }
+  .sc__type {
+    background-position: 0 0;
+  }
+  .sc__ring-fill {
+    stroke-dashoffset: 8;
+  }
+  .sc__check svg {
+    stroke-dashoffset: 0;
+  }
+}

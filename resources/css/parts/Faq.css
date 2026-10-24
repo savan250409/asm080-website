@@ -1,0 +1,107 @@
+.faq__inner {
+  max-width: 920px;
+}
+
+.faq__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.faq__item {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(24, 24, 58, 0.04);
+  transition: box-shadow 0.4s var(--ease-out), border-color 0.3s ease, transform 0.4s var(--ease-out);
+}
+
+.faq__item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px rgba(108, 92, 231, 0.1);
+}
+
+.faq__item.is-open {
+  border-color: var(--primary-light);
+  box-shadow: 0 18px 40px rgba(108, 92, 231, 0.14);
+}
+
+.faq__q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  text-align: left;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: clamp(16px, 1.5vw, 19px);
+  color: var(--text);
+  background: transparent;
+  border: none;
+  padding: 24px 26px;
+  cursor: pointer;
+}
+
+.faq__toggle {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--primary-soft);
+  color: var(--primary);
+  transition: transform 0.45s var(--ease-spring), background 0.3s ease, color 0.3s ease;
+}
+
+.faq__item.is-open .faq__toggle {
+  transform: rotate(45deg);
+  background: var(--grad);
+  color: #fff;
+}
+
+/* Height animates via grid rows 0fr -> 1fr (JS removes the `hidden`
+   attribute on load, so without JS closed answers stay hidden). */
+.faq__a {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s var(--ease-out);
+}
+
+.faq__a-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.faq__a-inner p {
+  padding: 0 26px 26px;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.35s ease, transform 0.5s var(--ease-out);
+}
+
+.faq__item.is-open .faq__a {
+  grid-template-rows: 1fr;
+}
+
+.faq__item.is-open .faq__a-inner p {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.08s;
+}
+
+.faq__a p {
+  font-size: 16.5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq__a,
+  .faq__a-inner p {
+    transition: none;
+  }
+  .faq__item:hover {
+    transform: none;
+  }
+}

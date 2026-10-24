@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="flag-icons-es" viewBox="0 0 512 512">
+  <path fill="#AA151B" d="M0 0h512v512H0z"/>
+  <path fill="#F1BF00" d="M0 128h512v256H0z"/>
+  <!-- Simplified coat of arms (the full vector version is ~80 KB and unreadable at icon size) -->
+  <g transform="translate(140 186)">
+    <path fill="#C8B100" d="M26 0h44l-4 16H30z"/>
+    <path fill="#CCC" d="M0 24h14v100H0zM82 24h14v100H82z"/>
+    <path fill="#AD1519" d="M0 52h14v10H0zM82 52h14v10H82z"/>
+    <path fill="#AD1519" d="M22 22h26v40H22z"/>
+    <path fill="#EEE" d="M48 22h26v40H48z"/>
+    <path fill="#F1BF00" d="M22 62h26v28c0 12-6 20-13 22-7-2-13-10-13-22z"/>
+    <path fill="#AD1519" d="M26 62h4v40h-4zM34 62h4v46h-4zM42 62h4v40h-4z"/>
+    <path fill="#AD1519" d="M48 62h26v28c0 12-6 20-13 22-7-2-13-10-13-22z"/>
+    <circle cx="48" cy="62" r="6" fill="#005BBF"/>
+  </g>
+</svg>

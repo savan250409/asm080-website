@@ -1,0 +1,129 @@
+.learnpath__tabs {
+  display: inline-flex;
+  gap: 6px;
+  padding: 6px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  margin: 0 auto 44px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* center the tab group */
+.learnpath .learnpath__tabs {
+  display: flex;
+  width: fit-content;
+}
+
+.learnpath__tab {
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-muted);
+  padding: 11px 22px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.learnpath__tab.is-active {
+  background: var(--grad);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(108, 92, 231, 0.34);
+}
+
+.learnpath__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  max-width: 860px;
+  margin-inline: auto;
+}
+
+.lp-step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.lp-step__node {
+  position: relative;
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  background: #eef0f6;
+  color: var(--text-faint);
+}
+
+.lp-step--done .lp-step__node {
+  background: #e3f8ee;
+  color: var(--accent-green);
+}
+.lp-step--active .lp-step__node {
+  background: var(--grad);
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(108, 92, 231, 0.4);
+}
+
+.lp-step__lock {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  font-size: 13px;
+  background: #fff;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.lp-step__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.lp-step__body strong {
+  font-size: 16.5px;
+  color: var(--text);
+}
+.lp-step--locked .lp-step__body strong {
+  color: var(--text-faint);
+}
+.lp-step__body span {
+  font-size: 13.5px;
+  color: var(--text-muted);
+}
+
+.lp-step__cta {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--grad);
+  padding: 8px 16px;
+  border-radius: 999px;
+}
+
+@media (max-width: 760px) {
+  .learnpath__grid {
+    grid-template-columns: 1fr;
+  }
+  .learnpath__tabs {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

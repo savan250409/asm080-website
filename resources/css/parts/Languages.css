@@ -1,0 +1,239 @@
+/* =====================================================================
+   Languages — two auto-scrolling rows of greeting cards (opposite
+   directions). Each row holds its list twice and slides by -50% for a
+   seamless loop; hovering a row pauses it.
+   ===================================================================== */
+.languages {
+  overflow: hidden;
+}
+
+.langs {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-block: 8px;
+}
+/* Soft white fades at both edges so cards glide in and out */
+.langs::before,
+.langs::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  width: min(18vw, 220px);
+  pointer-events: none;
+}
+.langs::before {
+  left: 0;
+  background: linear-gradient(90deg, #fff 10%, rgba(255, 255, 255, 0));
+}
+.langs::after {
+  right: 0;
+  background: linear-gradient(270deg, #fff 10%, rgba(255, 255, 255, 0));
+}
+
+.langs__row {
+  display: flex;
+  width: max-content;
+  animation: langsLeft 65s linear infinite;
+}
+.langs__row--right {
+  animation-name: langsRight;
+  animation-duration: 75s;
+}
+.langs:hover .langs__row {
+  animation-play-state: paused;
+}
+@keyframes langsLeft {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes langsRight {
+  from { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+.langs__list {
+  display: flex;
+  gap: 18px;
+  padding: 12px 9px 18px;
+  margin: 0;
+  list-style: none;
+}
+
+/* ---- Greeting card ---- */
+.lang {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 22px 12px 12px;
+  border-radius: 22px;
+  background: #fff;
+  border: 1px solid rgba(108, 92, 231, 0.1);
+  box-shadow:
+    0 1px 2px rgba(24, 24, 58, 0.04),
+    0 12px 30px -14px rgba(108, 92, 231, 0.25);
+  white-space: nowrap;
+  transition: transform 0.5s var(--ease-spring), box-shadow 0.5s var(--ease-out);
+}
+/* Gradient border that fades in on hover */
+.lang::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, #8b7cf6, #a855f7 50%, #ec4899);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.lang:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 1px 2px rgba(24, 24, 58, 0.04),
+    0 24px 44px -16px rgba(108, 92, 231, 0.42);
+}
+.lang:hover::after {
+  opacity: 1;
+}
+
+/* Flag in a rounded square with a light sweep passing over it */
+.lang__flag {
+  position: relative;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 14px -4px rgba(24, 24, 58, 0.28);
+  transition: transform 0.6s var(--ease-spring);
+}
+.lang__flag img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* hairline inner edge so light flags don't melt into the card */
+.lang__flag::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(24, 24, 58, 0.1);
+  z-index: 2;
+}
+.lang__flag::after {
+  content: '';
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: -80%;
+  width: 55%;
+  z-index: 1;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+  transform: skewX(-18deg);
+  animation: flagShine 5s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 0.35s);
+}
+@keyframes flagShine {
+  0%, 70% { left: -80%; }
+  90%, 100% { left: 140%; }
+}
+.lang:hover .lang__flag {
+  transform: rotate(-6deg) scale(1.08);
+}
+
+.lang__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  line-height: 1.15;
+}
+.lang__hello {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  transition: color 0.3s ease;
+}
+.lang:hover .lang__hello {
+  background: linear-gradient(90deg, #6c5ce7, #a855f7, #ec4899);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.lang__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.lang__name i {
+  font-style: normal;
+  margin-inline: 2px;
+  color: var(--text-faint);
+}
+
+@media (max-width: 760px) {
+  .langs {
+    gap: 8px;
+  }
+  .langs::before,
+  .langs::after {
+    width: 40px;
+  }
+  .langs__list {
+    gap: 12px;
+    padding: 8px 6px 14px;
+  }
+  .lang {
+    gap: 11px;
+    padding: 9px 16px 9px 9px;
+    border-radius: 18px;
+  }
+  .lang__flag {
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+  }
+  .lang__hello {
+    font-size: 16px;
+  }
+  .lang__name {
+    font-size: 12px;
+  }
+}
+
+/* Reduced motion: a static, wrapped grid of cards instead of a marquee */
+@media (prefers-reduced-motion: reduce) {
+  .langs::before,
+  .langs::after {
+    display: none;
+  }
+  .langs__row {
+    animation: none;
+    width: auto;
+    justify-content: center;
+  }
+  .langs__row--right,
+  .langs__list[aria-hidden='true'] {
+    display: none;
+  }
+  .langs__list {
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: var(--maxw);
+    margin-inline: auto;
+  }
+  .lang__flag::after {
+    animation: none;
+    display: none;
+  }
+}

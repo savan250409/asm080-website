@@ -1,0 +1,195 @@
+/* Floating glass navbar, centered at the top of the viewport */
+.nav {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  /* Compact pill like the reference: 80% wide, capped at 896px */
+  width: min(calc(100% - 32px), max(80%, 760px), 896px);
+  z-index: 50;
+}
+
+.nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 66px;
+  padding: 0 10px 0 16px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 18px;
+  box-shadow: 0 18px 50px rgba(24, 24, 58, 0.1);
+  transition: background 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out),
+    height 0.4s var(--ease-out);
+}
+
+/* Compact, more opaque bar once the page scrolls */
+.nav--scrolled .nav__inner {
+  height: 60px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 16px 44px rgba(24, 24, 58, 0.14);
+}
+
+.nav__links {
+  display: flex;
+  gap: 2px;
+}
+
+.nav__links a {
+  position: relative;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-muted);
+  padding: 8px 13px;
+  border-radius: 10px;
+  transition: color 0.25s ease, background 0.25s ease;
+}
+
+.nav__links a:hover {
+  color: var(--primary);
+  background: var(--primary-softer);
+}
+
+/* Gradient underline that grows in for the section currently in view */
+.nav__links a::after {
+  content: '';
+  position: absolute;
+  left: 13px;
+  right: 13px;
+  bottom: 3px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #6c5ce7, #a855f7);
+  transform: scaleX(0);
+  transition: transform 0.45s var(--ease-out);
+}
+
+.nav__links a.is-active {
+  color: var(--primary);
+}
+
+.nav__links a.is-active::after {
+  transform: scaleX(1);
+}
+
+.nav__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav__cta {
+  padding: 11px 20px;
+  font-size: 14.5px;
+  background: linear-gradient(90deg, #6c5ce7, #a855f7);
+}
+
+.nav__burger {
+  display: none;
+  background: var(--primary-soft);
+  color: var(--primary);
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav__mobile {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transform: translateY(-10px) scale(0.98);
+  transform-origin: top center;
+  transition: opacity 0.3s var(--ease-out), transform 0.4s var(--ease-out);
+}
+
+.nav__mobile.is-open {
+  opacity: 1;
+  transform: none;
+}
+
+/* Links cascade in after the panel opens */
+.nav__mobile a {
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.3s ease, transform 0.4s var(--ease-out), background 0.2s ease;
+}
+.nav__mobile.is-open a {
+  opacity: 1;
+  transform: none;
+}
+.nav__mobile.is-open a:nth-child(2) { transition-delay: 0.04s, 0.04s, 0s; }
+.nav__mobile.is-open a:nth-child(3) { transition-delay: 0.08s, 0.08s, 0s; }
+.nav__mobile.is-open a:nth-child(4) { transition-delay: 0.12s, 0.12s, 0s; }
+.nav__mobile.is-open a:nth-child(5) { transition-delay: 0.16s, 0.16s, 0s; }
+
+.nav__mobile a:not(.btn) {
+  padding: 12px 10px;
+  font-weight: 600;
+  color: var(--text);
+  border-radius: 12px;
+}
+
+.nav__mobile a:hover {
+  background: var(--primary-softer);
+}
+
+.nav__mobile .btn {
+  margin-top: 8px;
+  color: #fff;
+}
+
+/* The `hidden` attribute must win over the display rules above/below. */
+.nav__mobile[hidden],
+.nav__burger svg[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 860px) {
+  .nav {
+    top: 10px;
+    width: calc(100% - 20px);
+  }
+  .nav__inner,
+  .nav--scrolled .nav__inner {
+    height: 60px;
+    padding: 0 8px 0 14px;
+    border-radius: 18px;
+  }
+  .nav__links {
+    display: none;
+  }
+  .nav__cta {
+    display: none;
+  }
+  .nav__burger {
+    display: inline-flex;
+  }
+  .nav__mobile {
+    display: flex;
+  }
+}
+
+/* Slightly smaller logo inside the compact bar */
+.nav .logo {
+  font-size: 20px;
+  gap: 9px;
+}
+.nav .logo__mark {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+}

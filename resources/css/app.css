@@ -1,0 +1,23 @@
+/* =====================================================================
+   Langla — stylesheet entry.
+   Imports the exact component styles ported from the React app so the
+   Laravel landing page renders identically. theme.css must come first
+   (it defines the CSS custom properties everything else uses).
+   ===================================================================== */
+@import './parts/theme.css';
+@import './parts/Logo.css';
+@import './parts/Navbar.css';
+@import './parts/PhoneMockup.css';
+@import './parts/Hero.css';
+@import './parts/TrustBar.css';
+@import './parts/Features.css';
+@import './parts/FeatureMocks.css';
+@import './parts/PathMock.css';
+@import './parts/LearningPath.css';
+@import './parts/WhyChooseUs.css';
+@import './parts/Languages.css';
+@import './parts/Faq.css';
+@import './parts/Download.css';
+@import './parts/Footer.css';
+@import './parts/Showcase.css';
+@import './parts/Motion.css';

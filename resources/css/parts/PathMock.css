@@ -1,0 +1,809 @@
+/* =====================================================================
+   Custom Learning Path card — three screens played by app.js
+   (initPathDemo):  goal  ->  path  ->  day.
+   State classes:
+     .lp__step.is-on / .is-done      step tracker
+     .lp__screen.is-active / .is-leaving
+     .lp__screen--goal.cur-1 / .cur-2 / .is-picked / .is-pressed
+     .lp__act.is-done, .lp__screen--day.is-celebrating (completion popup)
+   ===================================================================== */
+.mock.mock--path {
+  padding: clamp(14px, 2vw, 18px);
+  background: #fff;
+  border: 1px solid #ece9f8;
+  border-radius: 30px;
+  box-shadow:
+    0 30px 70px -20px color-mix(in srgb, var(--mc) 30%, transparent),
+    0 12px 28px -18px rgba(24, 24, 58, 0.18);
+}
+.mock.mock--path::before,
+.mock.mock--path::after {
+  display: none;
+}
+
+/* ---- Step tracker ---- */
+.lp__steps {
+  display: flex;
+  gap: 6px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+.lp__step {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 6px;
+  border-radius: 12px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-faint);
+  background: #f6f5fb;
+  overflow: hidden;
+  transition: color 0.35s ease, background 0.35s ease;
+}
+.lp__step b {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 11px;
+  color: #fff;
+  background: #cfd0e3;
+  transition: background 0.35s ease;
+}
+/* progress fill sweeping across the active step */
+.lp__step::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--mc), #a855f7);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.lp__step.is-on {
+  color: color-mix(in srgb, var(--mc) 85%, #000);
+  background: color-mix(in srgb, var(--mc) 12%, #fff);
+}
+.lp__step.is-on b {
+  background: linear-gradient(135deg, #818cf8, var(--mc));
+}
+.lp__step.is-on::after {
+  animation: stepFill 3.4s linear forwards;
+}
+.lp__step.is-done {
+  color: color-mix(in srgb, var(--mc) 70%, #000);
+  background: color-mix(in srgb, var(--mc) 7%, #fff);
+}
+.lp__step.is-done b {
+  background: #22c55e;
+}
+@keyframes stepFill {
+  to { transform: scaleX(1); }
+}
+
+/* ---- Screen stage ---- */
+.lp__screens {
+  position: relative;
+  height: 392px;
+  border-radius: 22px;
+  overflow: hidden;
+  background:
+    radial-gradient(70% 50% at 100% 0%, color-mix(in srgb, var(--mc) 10%, transparent), transparent 70%),
+    linear-gradient(180deg, #faf9ff, #f3f2fd);
+  border: 1px solid #efedf9;
+}
+.lp__screen {
+  position: absolute;
+  inset: 0;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateX(36px);
+  pointer-events: none;
+  transition: opacity 0.45s ease, transform 0.6s var(--ease-out);
+}
+.lp__screen.is-active {
+  opacity: 1;
+  transform: none;
+}
+.lp__screen.is-leaving {
+  opacity: 0;
+  transform: translateX(-36px);
+}
+
+.lp__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.lp__sub {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+/* ---- Screen 1: goal picker ---- */
+.lp__goals {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 16px;
+}
+.lp__goal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 12px;
+  border-radius: 14px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text);
+  background: #fff;
+  border: 1.5px solid #ebe8f7;
+  box-shadow: 0 3px 10px rgba(24, 24, 58, 0.04);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.lp__goal i {
+  font-style: normal;
+  font-size: 16px;
+}
+.lp__screen--goal.is-active .lp__goal {
+  animation: lpIn 0.5s var(--ease-spring) forwards;
+}
+.lp__goal:nth-child(2) { animation-delay: 0.06s !important; }
+.lp__goal:nth-child(3) { animation-delay: 0.12s !important; }
+.lp__goal:nth-child(4) { animation-delay: 0.18s !important; }
+.lp__goal:nth-child(5) { animation-delay: 0.24s !important; }
+.lp__goal:nth-child(6) { animation-delay: 0.3s !important; }
+@keyframes lpIn {
+  to { opacity: 1; transform: none; }
+}
+.lp__screen--goal.is-picked .lp__goal--pick {
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(135deg, #818cf8, var(--mc));
+  box-shadow: 0 10px 22px -6px color-mix(in srgb, var(--mc) 60%, transparent);
+  animation: lpIn 0.5s var(--ease-spring) forwards, goalPop 0.45s var(--ease-spring);
+}
+@keyframes goalPop {
+  0% { scale: 1; }
+  40% { scale: 1.08; }
+  100% { scale: 1; }
+}
+
+.lp__continue {
+  margin-top: auto;
+  display: block;
+  padding: 13px;
+  border-radius: 14px;
+  text-align: center;
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #fff;
+  background: #d9d8e8;
+  transition: background 0.4s ease, transform 0.2s ease, box-shadow 0.4s ease;
+}
+.lp__screen--goal.is-picked .lp__continue {
+  background: linear-gradient(135deg, #818cf8, var(--mc));
+  box-shadow: 0 12px 24px -8px color-mix(in srgb, var(--mc) 60%, transparent);
+}
+.lp__screen--goal.is-pressed .lp__continue {
+  transform: scale(0.96);
+}
+
+/* Fake pointer that taps "Travel", then "Continue" */
+.lp__cursor {
+  position: absolute;
+  left: 84%;
+  top: 92%;
+  opacity: 0;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.25));
+  transition: left 0.8s var(--ease-in-out), top 0.8s var(--ease-in-out), opacity 0.3s ease;
+}
+.lp__cursor::after {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: -8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--mc);
+  opacity: 0;
+}
+.lp__screen--goal.cur-1 .lp__cursor {
+  opacity: 1;
+  left: 30%;
+  top: 27%;
+}
+.lp__screen--goal.cur-2 .lp__cursor {
+  opacity: 1;
+  left: 55%;
+  top: 88%;
+}
+.lp__screen--goal.is-picked.cur-1 .lp__cursor::after,
+.lp__screen--goal.is-pressed .lp__cursor::after {
+  animation: tapRing 0.6s ease-out;
+}
+@keyframes tapRing {
+  from { opacity: 1; transform: scale(0.4); }
+  to { opacity: 0; transform: scale(1.8); }
+}
+
+/* ---- Screen 2: generated path ---- */
+.lp__path-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.lp__ai {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: color-mix(in srgb, var(--mc) 85%, #000);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--mc) 12%, #fff), #fdf2f8, color-mix(in srgb, var(--mc) 12%, #fff));
+  background-size: 200% 100%;
+  animation: aiShimmer 2.4s linear infinite;
+  white-space: nowrap;
+}
+@keyframes aiShimmer {
+  to { background-position: -200% 0; }
+}
+
+.lp__units {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+/* timeline that draws itself down behind the nodes */
+.lp__line {
+  position: absolute;
+  left: 16px;
+  top: 18px;
+  bottom: 18px;
+  width: 3px;
+  border-radius: 3px;
+  background: #e6e4f3;
+  overflow: hidden;
+}
+.lp__line i {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, var(--mc), #a855f7);
+  transform: scaleY(0);
+  transform-origin: top;
+}
+.lp__screen--path.is-active .lp__line i {
+  transition: transform 1.4s var(--ease-out) 0.3s;
+  transform: scaleY(0.3);
+}
+
+.lp__unit {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  transform: translateX(-18px);
+}
+.lp__screen--path.is-active .lp__unit {
+  animation: lpIn 0.55s var(--ease-spring) forwards;
+  animation-delay: calc(0.2s + var(--k) * 0.16s);
+}
+.lp__node {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  background: #c9c8dc;
+  border: 3px solid #f6f5fd;
+}
+.lp__unit--active .lp__node {
+  background: linear-gradient(135deg, #818cf8, var(--mc));
+  animation: nodePulse 1.8s ease-out infinite;
+}
+@keyframes nodePulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--mc) 50%, transparent); }
+  70%, 100% { box-shadow: 0 0 0 12px transparent; }
+}
+.lp__unit-card {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 16px;
+  background: #fff;
+  border: 1.5px solid #eeecf8;
+}
+.lp__unit--active .lp__unit-card {
+  border-color: color-mix(in srgb, var(--mc) 45%, transparent);
+  box-shadow: 0 10px 22px -10px color-mix(in srgb, var(--mc) 50%, transparent);
+}
+.lp__unit:not(.lp__unit--active) .lp__unit-card {
+  opacity: 0.6;
+}
+.lp__unit-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  font-size: 19px;
+  background: linear-gradient(135deg, #eef2ff, #fae8ff);
+}
+.lp__unit-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.lp__unit-text strong {
+  font-size: 13.5px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lp__unit-text small {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+.lp__go {
+  flex-shrink: 0;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(135deg, #818cf8, var(--mc));
+}
+.lp__lock {
+  flex-shrink: 0;
+  font-size: 13px;
+  filter: grayscale(1);
+  opacity: 0.7;
+}
+
+/* ---- Screen 3: today's lesson ---- */
+.lp__day-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1.5px solid #eeecf8;
+  box-shadow: 0 10px 24px -14px color-mix(in srgb, var(--mc) 50%, transparent);
+}
+.lp__day-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  font-size: 24px;
+  background: linear-gradient(135deg, #eef2ff, #fae8ff);
+}
+.lp__day-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+.lp__day-text small {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--mc);
+}
+.lp__day-text strong {
+  font-size: 15px;
+  color: var(--text);
+}
+.lp__day-text em {
+  font-style: normal;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+.lp__ring {
+  position: relative;
+  flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+}
+.lp__ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.lp__ring circle {
+  fill: none;
+  stroke-width: 4;
+}
+.lp__ring-track {
+  stroke: #ebe9f6;
+}
+.lp__ring-fill {
+  stroke: var(--mc);
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transition: stroke-dashoffset 0.6s var(--ease-out), stroke 0.4s ease;
+}
+.lp__count {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.lp__acts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+.lp__act {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 11px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1.5px solid #eeecf8;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: border-color 0.35s ease, background 0.35s ease;
+}
+.lp__screen--day.is-active .lp__act {
+  animation: lpIn 0.5s var(--ease-spring) forwards;
+  animation-delay: calc(0.15s + var(--k) * 0.1s);
+}
+.lp__act-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  color: var(--mc);
+  background: color-mix(in srgb, var(--mc) 12%, #fff);
+}
+.lp__act-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.lp__act-text strong {
+  font-size: 13.5px;
+  color: var(--text);
+}
+.lp__act-text small {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+.lp__check {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  color: transparent;
+  border: 2px solid #dddbeb;
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+.lp__act.is-done {
+  border-color: rgba(34, 197, 94, 0.35);
+  background: #f3fdf6;
+}
+.lp__act.is-done .lp__check {
+  color: #fff;
+  border-color: #22c55e;
+  background: #22c55e;
+  animation: goalPop 0.45s var(--ease-spring);
+}
+
+/* ---- Completion popup: backdrop, confetti rain, celebrating card ---- */
+.lp__pop {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(24, 24, 58, 0.32);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0s linear 0.4s;
+}
+.lp__screen--day.is-celebrating .lp__pop {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.4s ease;
+}
+
+/* Confetti falling across the whole screen */
+.lp__rain {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.lp__rain i {
+  position: absolute;
+  top: -16px;
+  left: var(--x);
+  width: calc(7px * var(--s));
+  height: calc(12px * var(--s));
+  border-radius: 2px;
+  opacity: 0;
+}
+.lp__rain i:nth-child(4n + 1) { background: #fde047; }
+.lp__rain i:nth-child(4n + 2) { background: #f472b6; }
+.lp__rain i:nth-child(4n + 3) { background: #818cf8; }
+.lp__rain i:nth-child(4n + 4) { background: #4ade80; border-radius: 50%; height: calc(7px * var(--s)); }
+.lp__screen--day.is-celebrating .lp__rain i {
+  animation: confettiFall 2.6s cubic-bezier(0.3, 0.6, 0.5, 1) var(--t) infinite;
+}
+@keyframes confettiFall {
+  0% { opacity: 1; transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(14px, 200px) rotate(260deg); }
+  100% { opacity: 0.9; transform: translate(-10px, 420px) rotate(560deg); }
+}
+
+.lp__pop-card {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 58px 18px 18px;
+  margin-top: 36px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 30px 60px -16px rgba(24, 24, 58, 0.45);
+  transform: translateY(30px) scale(0.85);
+  opacity: 0;
+}
+.lp__screen--day.is-celebrating .lp__pop-card {
+  animation: popIn 0.65s var(--ease-spring) 0.1s forwards;
+}
+@keyframes popIn {
+  to { opacity: 1; transform: none; }
+}
+
+/* Robot badge peeking over the card, with spinning golden rays */
+.lp__badge {
+  position: absolute;
+  top: -44px;
+  left: 50%;
+  width: 88px;
+  height: 88px;
+  translate: -50% 0;
+}
+.lp__rays {
+  position: absolute;
+  inset: -26px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(rgba(251, 191, 36, 0.38) 0deg 10deg, transparent 10deg 24deg);
+  -webkit-mask-image: radial-gradient(circle, #000 35%, transparent 70%);
+  mask-image: radial-gradient(circle, #000 35%, transparent 70%);
+  animation: dlSpin 9s linear infinite;
+}
+.lp__badge img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #fff;
+  border: 4px solid #fff;
+  box-shadow: 0 0 0 3px #fbbf24, 0 12px 24px rgba(24, 24, 58, 0.25);
+}
+.lp__medal {
+  position: absolute;
+  right: -8px;
+  bottom: -4px;
+  font-size: 28px;
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.25));
+  transform: scale(0) rotate(-30deg);
+}
+.lp__screen--day.is-celebrating .lp__medal {
+  animation: medalIn 0.6s var(--ease-spring) 0.55s forwards;
+}
+@keyframes medalIn {
+  to { transform: scale(1) rotate(0deg); }
+}
+
+.lp__sparkle {
+  position: absolute;
+  color: #fbbf24;
+  font-size: 16px;
+  opacity: 0;
+}
+.lp__sparkle--1 { top: 14px; left: 22%; }
+.lp__sparkle--2 { top: 6px; right: 20%; font-size: 12px; color: #a78bfa; }
+.lp__sparkle--3 { top: 46px; right: 12%; font-size: 10px; color: #f472b6; }
+.lp__screen--day.is-celebrating .lp__sparkle {
+  animation: twinkle 1.4s ease-in-out infinite;
+}
+.lp__sparkle--2 { animation-delay: 0.4s !important; }
+.lp__sparkle--3 { animation-delay: 0.8s !important; }
+@keyframes twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.4) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.1) rotate(90deg); }
+}
+
+.lp__pop-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(90deg, #4f46e5, #a855f7, #ec4899);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.lp__pop-sub {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.lp__pop-words {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text);
+  background: #f2fbf5;
+  border: 1px solid #ccefd8;
+}
+.lp__pop-words i {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-style: normal;
+  font-size: 12px;
+  color: #fff;
+  background: #22c55e;
+}
+.lp__pop-words b {
+  margin-left: auto;
+  color: #16a34a;
+}
+.lp__pop-meta {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.lp__pop-meta span {
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--mc) 80%, #000);
+  background: color-mix(in srgb, var(--mc) 10%, #fff);
+}
+.lp__pop-btn {
+  width: 100%;
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(135deg, #818cf8, var(--mc) 55%, #a855f7);
+  box-shadow: 0 12px 24px -8px color-mix(in srgb, var(--mc) 65%, transparent);
+}
+.lp__screen--day.is-celebrating .lp__pop-btn {
+  animation: btnGlow 1.8s ease-in-out 1s infinite;
+}
+@keyframes btnGlow {
+  0%, 100% { box-shadow: 0 12px 24px -8px color-mix(in srgb, var(--mc) 65%, transparent), 0 0 0 0 color-mix(in srgb, var(--mc) 40%, transparent); }
+  50% { box-shadow: 0 12px 24px -8px color-mix(in srgb, var(--mc) 65%, transparent), 0 0 0 6px transparent; }
+}
+
+@media (max-width: 520px) {
+  .lp__screens {
+    height: 404px;
+  }
+  .lp__screen {
+    padding: 14px;
+  }
+  .lp__step {
+    font-size: 11px;
+    gap: 5px;
+    padding: 7px 4px;
+  }
+  .lp__step b {
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+  }
+  .lp__goal {
+    font-size: 12.5px;
+    padding: 10px;
+  }
+  .lp__step {
+    white-space: nowrap;
+  }
+}
+
+/* Very narrow phones: drop the step numbers so labels stay on one line */
+@media (max-width: 420px) {
+  .lp__step b {
+    display: none;
+  }
+}
+
+/* Reduced motion: show the finished path screen, no sequence */
+@media (prefers-reduced-motion: reduce) {
+  .lp__screen,
+  .lp__goal,
+  .lp__unit,
+  .lp__act,
+  .lp__line i {
+    transition: none !important;
+    animation: none !important;
+  }
+  .lp__unit,
+  .lp__goal,
+  .lp__act {
+    opacity: 1;
+    transform: none;
+  }
+  .lp__ai,
+  .lp__unit--active .lp__node,
+  .lp__rays,
+  .lp__rain i,
+  .lp__sparkle,
+  .lp__pop-btn {
+    animation: none !important;
+  }
+}

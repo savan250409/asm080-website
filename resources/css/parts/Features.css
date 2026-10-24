@@ -1,0 +1,78 @@
+.features__list {
+  display: flex;
+  flex-direction: column;
+  gap: 130px;
+}
+
+/* Each row sets --mc (its accent color); chips and card use it. */
+.feature-row {
+  --mc: var(--primary);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(40px, 6vw, 96px);
+  align-items: center;
+}
+
+.feature-row--rev .feature-row__copy {
+  order: 2;
+}
+
+.feature-row__copy h3 {
+  font-size: clamp(30px, 3.8vw, 54px);
+  line-height: 1.08;
+}
+
+.feature-row__copy p {
+  margin-top: 22px;
+  font-size: clamp(17px, 1.5vw, 20px);
+  line-height: 1.7;
+  max-width: 580px;
+}
+
+.feature-row__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.feature-row__chips li {
+  font-size: 15px;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--mc) 78%, #000);
+  background: color-mix(in srgb, var(--mc) 9%, #fff);
+  border: 1px solid color-mix(in srgb, var(--mc) 18%, transparent);
+  padding: 10px 16px;
+  border-radius: 12px;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.feature-row__chips li:hover {
+  transform: translateY(-2px);
+  background: color-mix(in srgb, var(--mc) 16%, #fff);
+}
+
+.feature-row__visual {
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 960px) {
+  .features__list {
+    gap: 90px;
+  }
+  .feature-row {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    text-align: center;
+  }
+  .feature-row--rev .feature-row__copy {
+    order: 0;
+  }
+  .feature-row__copy p {
+    margin-inline: auto;
+  }
+  .feature-row__chips {
+    justify-content: center;
+  }
+}
