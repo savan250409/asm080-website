@@ -1,2 +1,4 @@
 User-agent: *
-Disallow:
+Allow: /
+
+Sitemap: https://langla-ai-tutor.web.app/sitemap.xml
